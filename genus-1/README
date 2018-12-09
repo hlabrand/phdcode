@@ -1,0 +1,107 @@
+
+fastthetas: computation of Jacobi's theta function and theta constants.
+
+This software computes Theta(z,tau) = sum_{n \in Z} q^{n^2} w^{2n} at
+arbitrary precision, in quasi-linear time. See the paper "Computing
+Jacobi's Theta in quasi-linear time" for details and proofs.
+It also features an optimized implementation of the naive algorithm,
+and an implementation of the algorithm for quasi-linear computation of
+(genus 1) theta constants featured in the paper "Fast evaluation of
+modular functions using Newton iterations and the AGM" by Régis Dupont.
+
+This software borrowed some interface code from cmh, available at
+http://cmh.gforge.inria.fr/.
+
+
+License
+-------
+
+    fastthetas -- computation of Jacobi's theta function and theta constants.
+    Copyright (C) 2015 Hugo Labrande.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    cmh is Copyright (C) 2006, 2010, 2011, 2012, 2013 Régis Dupont, Andreas
+    Enge, Emmanuel Thomé, distributed under the licence GNU GPL v3.0+.
+
+
+Prerequisites
+-------------
+
+The following software libraries are required to compile and use fastthetas:
+ - Gnu MP, or alternately MPIR ;
+    http://gmplib.org/
+    version 5.0 or above is recommended
+ - Gnu MPFR ;
+    http://mpfr.org/
+    version 3.0 or above is recommended
+ - Gnu MPC ;
+    http://mpc.multiprecision.org/
+    version 1.0 or above is recommended
+
+The development platform is recent Debian GNU/Linux, and most testing has
+been done in this environment. As a general rule of thumb, if things bomb
+out, a reasonable explanation could be subtle distribution differences,
+which are not that hard to fix, but terribly annoying indeed.
+
+
+Compiling
+---------
+
+Compiling this program can be done using the following commands:
+
+gcc fastthetas.c -o fastthetas.o -c -g
+gcc fastthetaconstants.c -o fastthetaconstants.o -c -g
+gcc naivethetas.c -o naivethetas.o -c -g
+gcc thetatool.c -o thetatool.o -c -g
+gcc misc.c -o misc.o -c -g
+
+gcc -o fastthetas fastthetas.o naivethetas.o fastthetaconstants.o thetatool.o misc.o -lmpc -lmpfr -lgmp -g 
+
+
+Using
+-----
+
+Warning: for any of the functions of this sofware, you need to make
+sure that
+    Im(tau) > 0.866, Im(z) < Im(tau)/2
+for the result to be correct/accurate.
+
+
+Usage is
+    ./fastthetas FastThetas p
+with p the precision required; then enter (stdin) two complex numbers
+z, t, each represented as (realpart imaginarypart).
+The output will be Theta(z,t) = a+bi, represented as (a b).
+
+Additionally,
+    ./fastthetas time FastThetas p
+will return the result as well as the number of milliseconds taken
+by the computation (without counting I/O).
+
+
+Other functions you can use instead of FastThetas:
+  - NaiveTheta: returns Theta(z,t) computed with the naive method.
+  - NaiveThetaFunctionAndThetaConstants_00_01: returns Theta00(z,tau),
+  Theta01(z,tau), Theta00(0,tau), Theta01(0,tau) using the naive method;
+  this only takes 5% more time than NaiveTheta.
+  - NaiveThetaFunctionAndThetaConstants_00_01_10: returns Theta00(z,tau),
+  Theta01(z,tau), Theta10(z,tau), Theta00(0,tau), Theta01(0,tau),
+  Theta10(0,tau) using the naive method.
+
+And those functions, which only require one argument (tau):
+  - DupontThetaConstants: implementation of the quasi-optimal algorithm
+  for genus 1 theta-constants.
+  - NaiveThetaConstants_00_01: returns Theta00(0,tau), Theta01(0,tau)
+  computed with the naive method.
